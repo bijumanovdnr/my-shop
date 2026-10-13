@@ -1,124 +1,58 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DON WEAR | Online Shop</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      margin: 0;
-      padding: 15px;
-    }
-    .header {
-      text-align: center;
-      padding: 10px 0;
-      border-bottom: 1px solid #333;
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 22px;
-      letter-spacing: 2px;
-      color: #e5a93b;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-top: 20px;
-    }
-    .card {
-      background-color: #1e1e1e;
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
-      border: 1px solid #2a2a2a;
-    }
-    .card img {
-      width: 100%;
-      height: 130px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-    .card h3 {
-      font-size: 14px;
-      margin: 10px 0 5px 0;
-    }
-    .price {
-      color: #e5a93b;
-      font-weight: bold;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-    .btn {
-      background-color: #e5a93b;
-      color: #000;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 100%;
-    }
-    .cart-status {
-      position: fixed;
-      bottom: 10px;
-      left: 15px;
-      right: 15px;
-      background-color: #e5a93b;
-      color: #000;
-      text-align: center;
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: bold;
-      display: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DON WEAR</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #121212; color: #fff; text-align: center; margin: 0; padding: 15px; }
+        h1 { color: #d4af37; margin-bottom: 5px; }
+        p.subtitle { color: #aaa; font-size: 14px; margin-bottom: 20px; }
+        .grid { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .card { background: #1e1e1e; border-radius: 12px; padding: 12px; width: 160px; border: 1px solid #333; }
+        .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
+        .title { font-weight: bold; font-size: 14px; margin: 10px 0 5px; color: #eee; }
+        .price { color: #d4af37; font-weight: bold; font-size: 13px; margin-bottom: 10px; }
+        .btn { background: #d4af37; color: #000; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+        .btn:active { opacity: 0.8; }
+    </style>
 </head>
 <body>
 
-  <div class="header">
     <h1>DON WEAR</h1>
-    <p style="font-size: 12px; color: #888; margin-top: 5px;">Rich Casual & Smart Classic</p>
-  </div>
+    <p class="subtitle">Rich Casual & Smart Classic</p>
 
-  <div class="grid">
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500" alt="Jeket">
-      <h3>Suede Bomber Jacket</h3>
-      <div class="price">450,000 UZS</div>
-      <button class="btn" onclick="addToCart('Suede Bomber', 450000)">Sotib olish</button>
+    <div class="grid">
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500" alt="Suede Bomber">
+            <div class="title">Suede Bomber Jacket</div>
+            <div class="price">450,000 UZS</div>
+            <button class="btn" onclick="buyItem('Suede Bomber Jacket', '450,000 UZS')">Sotib olish</button>
+        </div>
+
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?w=500" alt="Leather Jacket">
+            <div class="title">Leather Jacket Classic</div>
+            <div class="price">520,000 UZS</div>
+            <button class="btn" onclick="buyItem('Leather Jacket Classic', '520,000 UZS')">Sotib olish</button>
+        </div>
     </div>
-    
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" alt="Kiyim">
-      <h3>Leather Jacket Classic</h3>
-      <div class="price">520,000 UZS</div>
-      <button class="btn" onclick="addToCart('Leather Jacket', 520000)">Sotib olish</button>
-    </div>
-  </div>
 
-  <div id="cartBar" class="cart-status">
-    Savatcha: <span id="count">0</span> ta mahsulot
-  </div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Oynani to'liq ekranga yoyish
 
-  <script>
-    let tg = window.Telegram.WebApp;
-    tg.expand(); // Telegramda to'liq ekranda ochish
-
-    let count = 0;
-    function addToCart(item, price) {
-      count++;
-      document.getElementById('count').innerText = count;
-      document.getElementById('cartBar').style.display = 'block';
-      
-      // Telegram MainButton (Pastki asosiy tugma) sozlamasi
-      tg.MainButton.setText(`Buyurtma berish (${count})`);
-      tg.MainButton.show();
-    }
-  </script>
+        function buyItem(name, price) {
+            const data = {
+                product: name,
+                price: price
+            };
+            
+            // Ma'lumotni Telegram botga yuborish va WebApp'ni yopish
+            tg.sendData(JSON.stringify(data));
+        }
+    </script>
 </body>
 </html>
